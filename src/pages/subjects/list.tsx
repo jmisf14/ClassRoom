@@ -21,12 +21,17 @@ type Subject = {
     id: number;
     name?: string;
     department?: string;
+    description?: string;
 };
 
 const SubjectsList = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState("all");
-
+    const departmentFilters = selectedDepartment === 'all' ? [] : [{
+        field: 'department',
+        operator: 'eq' as const,
+        value: selectedDepartment,
+    }];
     const subjectTable = useTable<Subject>({
         columns: useMemo<ColumnDef<Subject>[]>(
             () => [
@@ -49,14 +54,30 @@ const SubjectsList = () => {
                     ),
                 },
                 {
-                    id: 'department',
-                    accessorKey: 'department',
+                    id: "departmentBadge",
+                    accessorKey: "department",
                     header: () => <p className="column-title">Department</p>,
                     cell: ({ getValue }) => (
                         <Badge variant="secondary">{getValue<string>()}</Badge>
                     ),
                     filterFn: "includesString",
                 },
+                {
+                    id: "description",
+                    accessorKey: "description",
+                    size: 300,
+                    header: () => <p className="column-title">Description</p>,
+                    cell: ({ getValue }) => (
+                        <span className="truncate line-clamp-2">
+                            {getValue<string>()}
+                        </span>
+                    ),
+                },
+                {
+                    id: "placeholder",
+                    header: () => null,
+                    cell: () => null,
+                }
             ],
             [],
         ),
@@ -64,7 +85,10 @@ const SubjectsList = () => {
             resource: "subjects",
             pagination: { pageSize: 10, mode: "server" },
             // These must be objects (not `{}`) if you include them.
-            filters: { mode: "server" },
+            filters: {
+                permanent: [...departmentFilters], 
+                mode: "server"
+            },
             sorters: { mode: "server" },
         },
     });
