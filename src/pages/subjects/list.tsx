@@ -32,6 +32,11 @@ const SubjectsList = () => {
         operator: 'eq' as const,
         value: selectedDepartment,
     }];
+    const searchFilters = searchQuery ? [{
+        field: 'name',
+        operator: 'contains' as const,
+        value: searchQuery,
+    }] : [];
     const subjectTable = useTable<Subject>({
         columns: useMemo<ColumnDef<Subject>[]>(
             () => [
@@ -86,10 +91,13 @@ const SubjectsList = () => {
             pagination: { pageSize: 10, mode: "server" },
             // These must be objects (not `{}`) if you include them.
             filters: {
-                permanent: [...departmentFilters], 
+                permanent: [...departmentFilters, ...searchFilters],
                 mode: "server"
             },
-            sorters: { mode: "server" },
+            sorters: {
+                initial: [{ field: 'id', order: 'desc' },
+                
+            ], mode: "server" },
         },
     });
 
