@@ -6,6 +6,7 @@ import type {
   GetListResponse,
 } from "@refinedev/core";
 import { API_URL } from "./constants";
+import { mockSubjects } from "@/mocks/subjects";
 
 const { dataProvider: restDataProvider, kyInstance } = createSimpleRestDataProvider({
   apiURL: API_URL,
@@ -15,6 +16,19 @@ export { kyInstance };
 
 export const dataProvider: DataProvider = {
   ...restDataProvider,
+  getApiUrl: () => API_URL,
+  getOne: async () => {
+    throw new Error("This function is not present in mock");
+  },
+  create: async () => {
+    throw new Error("This function is not present in mock");
+  },
+  update: async () => {
+    throw new Error("This function is not present in mock");
+  },
+  deleteOne: async () => {
+    throw new Error("This function is not present in mock");
+  },
   getList: async <TData extends BaseRecord = BaseRecord>(
     params: GetListParams,
   ): Promise<GetListResponse<TData>> => {
@@ -25,7 +39,10 @@ export const dataProvider: DataProvider = {
       return { data: [] as TData[], total: 0 };
     }
 
-    // Delegate to the REST provider for real data.
-    return await restDataProvider.getList<TData>(params);
+    // Mock list for subjects
+    return {
+      data: mockSubjects as unknown as TData[],
+      total: mockSubjects.length,
+    };
   },
 };
