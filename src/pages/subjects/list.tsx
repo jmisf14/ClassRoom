@@ -3,7 +3,8 @@ import { CreateButton } from "@/components/refine-ui/buttons/create";
 import { DataTable } from "@/components/refine-ui/data-table/data-table";
 import { ListView } from "@/components/refine-ui/views/list-view";
 import { DEPARTMENT_OPTIONS } from "@/constants";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import {
@@ -26,15 +27,46 @@ const SubjectsList = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState("all");
 
-    const columns: ColumnDef<Subject>[] = [
-        { accessorKey: "id", header: "ID" },
-        { accessorKey: "name", header: "Name" },
-        { accessorKey: "department", header: "Department" },
-    ];
-
     const subjectTable = useTable<Subject>({
-        refineCoreProps: { resource: "subjects" },
-        columns,
+        columns: useMemo<ColumnDef<Subject>[]>(
+            () => [
+                {
+                    id: "name",
+                    accessorKey: "name",
+                    size: 200,
+                    header: () => <p className="column-title">Name</p>,
+                    cell: ({ getValue }) => (
+                        <span className="text-left">{getValue<string>()}</span>
+                    ),
+                    filterFn: "includesString",
+                },
+                {
+                    id: "department",
+                    accessorKey: "department",
+                    header: () => <p className="column-title">Department</p>,
+                    cell: ({ getValue }) => (
+                        <span className="text-left">{getValue<string>()}</span>
+                    ),
+                },
+                {
+                    id: 'department',
+                    accessorKey: 'department',
+                    header: () => <p className="column-title">Department</p>,
+                    cell: ({ getValue }) => (
+                        <Badge variant="secondary">{getValue<string>()}</Badge>
+                    ),
+                    filterFn: "includesString",
+                },
+            ],
+            [],
+        ),
+        refineCoreProps: {
+            resource: "subjects",
+            pagination: { pageSize: 10, mode: "server" },
+            // These must be objects (not `{}`) if you include them.
+            filters: { mode: "server" },
+            sorters: { mode: "server" },
+        },
     });
 
     return (
@@ -81,7 +113,7 @@ const SubjectsList = () => {
 
 
         </ListView>
-    )
+    );
 }
 
 export default SubjectsList;
