@@ -1,5 +1,5 @@
 import express from "express";
-import { and, eq, ilike, or, sql, type SQLWrapper } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, ilike, or, sql, type SQLWrapper } from "drizzle-orm";
 import { db } from "../../db.js";
 import { departments, subjects } from "../schema/app.js";
 
@@ -46,6 +46,21 @@ router.get('/', async (req, res) => {
         res.status(200).json({ data, page: currentPage, limit: limitPerPage });
 
         const totalCount = countResult[0]?.count ?? 0;
+        const subjectsList = await db.select({ ...getTableColumns(subjects), department: { ...getTableColumns(departments) } })
+            .from(subjects).leftJoin(departments, eq(subjects.departmentId, departments.id))
+            .where(whereClause).orderBy(desc(subjects.createdAt))
+            .limit(limitPerPage).offset(offset); 
+        res.status(200).json({ data: subjectsList, page: currentPage, limit: limitPerPage, total: totalCount });
+
+        res.status(200).json({
+            data: subjectsList,
+            pagination: {
+                page: currentPage, 
+                limit: limitPerPage,
+                total: totalCount, 
+                totalPages: Math.ceil(totalCount / limitPerPage),
+            }
+        })
     } catch (e) {
         console.error(`GET /subjects error: ${e}`);
         res.status(500).json({ error: 'Failed to get subjects' });
