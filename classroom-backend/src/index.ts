@@ -1,6 +1,16 @@
 import { eq } from "drizzle-orm";
 import { db, pool } from "./db.js";
 import { departments } from "./db/schema/app.js";
+import express from "express";
+import subjectsRouter from "./db/routes/subjects.js";
+
+const app = express();
+const PORT = 8000;
+
+app.use(express.json());
+
+app.use('/api/subjects', subjectsRouter); 
+
 
 async function main() {
     try {
