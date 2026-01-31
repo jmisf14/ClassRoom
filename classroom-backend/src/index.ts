@@ -1,11 +1,20 @@
 import { eq } from "drizzle-orm";
-import { db, pool } from "./db.js";
+import { pool } from "./db.js";
 import { departments } from "./db/schema/app.js";
 import express from "express";
 import subjectsRouter from "./db/routes/subjects.js";
+import { db } from "./db/schema/index.js";
+import cors from "cors";
 
 const app = express();
 const PORT = 8000;
+
+app.use(cors({
+        origin: process.env.FRONTEND_URL,
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        credentials: true,
+    })
+); 
 
 app.use(express.json());
 
