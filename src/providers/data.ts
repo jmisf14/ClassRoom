@@ -1,48 +1,30 @@
-import { createSimpleRestDataProvider } from "@refinedev/rest/simple-rest";
-import type {
-  BaseRecord,
-  DataProvider,
-  GetListParams,
-  GetListResponse,
-} from "@refinedev/core";
-import { API_URL } from "./constants";
-import { mockSubjects } from "@/mocks/subjects";
+import { createDataProvider, type CreateDataProviderOptions } from "@refinedev/rest";
+import { BACKEND_BASE_URL } from "@/constants";
+import type { ListResponse } from "@/Types";
 
-const { dataProvider: restDataProvider, kyInstance } = createSimpleRestDataProvider({
-  apiURL: API_URL,
-});
+// Our backend serves resources under /api (e.g. GET /api/subjects)
+if (!BACKEND_BASE_URL) {
+  throw new Error("VITE_BACKEND_BASE_URL is not set (see classroom-frontend/src/constants).");
+}
 
-export { kyInstance };
+const API_URL = `${BACKEND_BASE_URL}/api`;
 
-export const dataProvider: DataProvider = {
-  ...restDataProvider,
-  getApiUrl: () => API_URL,
-  getOne: async () => {
-    throw new Error("This function is not present in mock");
-  },
-  create: async () => {
-    throw new Error("This function is not present in mock");
-  },
-  update: async () => {
-    throw new Error("This function is not present in mock");
-  },
-  deleteOne: async () => {
-    throw new Error("This function is not present in mock");
-  },
-  getList: async <TData extends BaseRecord = BaseRecord>(
-    params: GetListParams,
-  ): Promise<GetListResponse<TData>> => {
-    const { resource } = params;
+const options: CreateDataProviderOptions = {
+  getList: {
+    getEndpoint: ({ resource }) => resource,
 
-    // Match your screenshot's intent: only support "subjects" for now.
-    if (resource !== "subjects") {
-      return { data: [] as TData[], total: 0 };
-    }
+    mapResponse: async (response: Response) => {
+      const payload: ListResponse = await response.clone().json();
+      return payload.data ?? [];
+    },
 
-    // Mock list for subjects
-    return {
-      data: mockSubjects as unknown as TData[],
-      total: mockSubjects.length,
-    };
+    getTotalCount: async (response: Response) => {
+      const payload: ListResponse = await response.clone().json();
+      return payload.pagination?.total ?? payload.data?.length ?? 0;
+    },
   },
 };
+
+const { dataProvider } = createDataProvider(API_URL, options);
+
+export { dataProvider };
