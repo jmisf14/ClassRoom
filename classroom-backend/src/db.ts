@@ -5,7 +5,32 @@ import { Pool } from "pg";
 dotenv.config({ path: ".env" });
 dotenv.config({ path: ".env.local" });
 
-if (!process.env.DATABASE_URL) {
+function normalizeDatabaseUrl(raw: string | undefined): string | undefined {
+    if (!raw) return undefined;
+    let value = raw.trim();
+
+    // Allow pasting a full psql command like: psql 'postgresql://...'
+    if (value.startsWith("psql")) {
+        // Extract first quoted string (single or double)
+        const match = value.match(/psql\s+(['"])([\s\S]+?)\1/);
+        if (match?.[2]) value = match[2].trim();
+        else value = value.replace(/^psql\s+/, "").trim();
+    }
+
+    // Strip surrounding quotes if present
+    if (
+        (value.startsWith("'") && value.endsWith("'")) ||
+        (value.startsWith('"') && value.endsWith('"'))
+    ) {
+        value = value.slice(1, -1).trim();
+    }
+
+    return value;
+}
+
+const databaseUrl = normalizeDatabaseUrl(process.env.DATABASE_URL);
+
+if (!databaseUrl) {
     throw new Error(
         "DATABASE_URL is not set. Add it to classroom-backend/.env or classroom-backend/.env.local (or export it in your shell).",
     );
@@ -13,7 +38,7 @@ if (!process.env.DATABASE_URL) {
 
 let dbUrl: URL;
 try {
-    dbUrl = new URL(process.env.DATABASE_URL);
+    dbUrl = new URL(databaseUrl);
 } catch {
     throw new Error(
         'DATABASE_URL is not a valid URL. It should look like: postgresql://user:pass@host/db?sslmode=require',
@@ -31,7 +56,7 @@ if (
 }
 
 export const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: databaseUrl,
 });
 
 export const db = drizzle(pool);

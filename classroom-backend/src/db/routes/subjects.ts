@@ -36,31 +36,30 @@ router.get('/', async (req, res) => {
         const countResult = await db
             .select({ count: sql<number>`count(*)` })
             .from(subjects)
-            .leftJoin(departments, eq(subjects.departmentId, departments.id))
             .where(whereClause);
-        const query = whereClause
-            ? db.select().from(subjects).where(whereClause)
-            : db.select().from(subjects);
+        const total = Number(countResult[0]?.count ?? 0);
 
-        const data = await query.limit(limitPerPage).offset(offset);
-        res.status(200).json({ data, page: currentPage, limit: limitPerPage });
-
-        const totalCount = countResult[0]?.count ?? 0;
-        const subjectsList = await db.select({ ...getTableColumns(subjects), department: { ...getTableColumns(departments) } })
-            .from(subjects).leftJoin(departments, eq(subjects.departmentId, departments.id))
-            .where(whereClause).orderBy(desc(subjects.createdAt))
-            .limit(limitPerPage).offset(offset); 
-        res.status(200).json({ data: subjectsList, page: currentPage, limit: limitPerPage, total: totalCount });
+        const subjectsList = await db
+            .select({
+                ...getTableColumns(subjects),
+                department: { ...getTableColumns(departments) },
+            })
+            .from(subjects)
+            .leftJoin(departments, eq(subjects.departmentId, departments.id))
+            .where(whereClause)
+            .orderBy(desc(subjects.createdAt))
+            .limit(limitPerPage)
+            .offset(offset);
 
         res.status(200).json({
             data: subjectsList,
             pagination: {
-                page: currentPage, 
+                page: currentPage,
                 limit: limitPerPage,
-                total: totalCount, 
-                totalPages: Math.ceil(totalCount / limitPerPage),
-            }
-        })
+                total,
+                totalPages: Math.ceil(total / limitPerPage),
+            },
+        });
     } catch (e) {
         console.error(`GET /subjects error: ${e}`);
         res.status(500).json({ error: 'Failed to get subjects' });

@@ -1,14 +1,15 @@
 import express from "express";
-import subjectsRouter from "./db/routes/subjects.js"; 
+import subjectsRouter from "./db/routes/subjects.js";
 
 const app = express();
-const PORT = 8000;
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
     res.status(200).send("Classroom backend is running.");
 });
+
+app.use("/api/subjects", subjectsRouter);
 
 const port = Number(process.env.PORT ?? 8000);
 
