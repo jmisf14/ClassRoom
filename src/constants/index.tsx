@@ -25,9 +25,9 @@ export const DEPARTMENTS = [
 export const DEPARTMENT_OPTIONS = DEPARTMENTS.map((dept) => ({
     label: dept,
     value: dept,
-})); 
+}));
 
-export const MAX_FILE_SIZE = 3 * 1024 * 1024; 
+export const MAX_FILE_SIZE = 3 * 1024 * 1024;
 export const ALLOWED_TYPES = [
     "image/png",
     "image/jpeg",
@@ -37,7 +37,8 @@ export const ALLOWED_TYPES = [
 
 export const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 export const CLOUDINARY_UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
-export const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+export const BACKEND_BASE_URL =
+    import.meta.env.VITE_BACKEND_BASE_URL ?? "http://localhost:8000";
 
 export const BASE_URL = import.meta.env.VITE_BASE_URL;
 export const ACCESS_TOKEN_KEY = import.meta.env.VITE_ACCESS_TOKEN_KEY;
