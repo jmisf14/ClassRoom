@@ -18,6 +18,21 @@ import { BookOpen, Home } from "lucide-react";
 import { dataProvider } from "@/providers/data.ts";
 
 function App() {
+  fetch("http://127.0.0.1:7242/ingest/6dac1f6a-680b-4e0b-87b2-f441b05623e3", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      sessionId: "debug-session",
+      runId: "pre-fix",
+      hypothesisId: "H1",
+      location: "src/App.tsx:App",
+      message: "App render",
+      data: { pathname: window.location?.pathname },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => { });
+  
+
   return (
     <BrowserRouter>
       <GitHubBanner />

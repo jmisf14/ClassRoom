@@ -37,6 +37,23 @@ const SubjectsList = () => {
         operator: 'contains' as const,
         value: searchQuery,
     }] : [];
+
+    // #region agent log
+    fetch("http://127.0.0.1:7242/ingest/6dac1f6a-680b-4e0b-87b2-f441b05623e3", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            sessionId: "debug-session",
+            runId: "pre-fix",
+            hypothesisId: "H2",
+            location: "src/pages/subjects/list.tsx:beforeUseTable",
+            message: "SubjectsList render before useTable",
+            data: { searchQuery, selectedDepartment },
+            timestamp: Date.now(),
+        }),
+    }).catch(() => { });
+    // #endregion agent log
+
     const subjectTable = useTable<Subject>({
         columns: useMemo<ColumnDef<Subject>[]>(
             () => [
@@ -96,10 +113,30 @@ const SubjectsList = () => {
             },
             sorters: {
                 initial: [{ field: 'id', order: 'desc' },
-                
-            ], mode: "server" },
+
+                ], mode: "server"
+            },
         },
     });
+
+    // #region agent log
+    fetch("http://127.0.0.1:7242/ingest/6dac1f6a-680b-4e0b-87b2-f441b05623e3", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            sessionId: "debug-session",
+            runId: "pre-fix",
+            hypothesisId: "H5",
+            location: "src/pages/subjects/list.tsx:afterUseTable",
+            message: "SubjectsList render after useTable",
+            data: {
+                hasTable: Boolean(subjectTable),
+                tableKeys: subjectTable ? Object.keys(subjectTable as object).slice(0, 20) : [],
+            },
+            timestamp: Date.now(),
+        }),
+    }).catch(() => { });
+    // #endregion agent log
 
     return (
         <ListView>

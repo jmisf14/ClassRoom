@@ -31,15 +31,64 @@ const options: CreateDataProviderOptions = {
           if (field === "name" || field === "code") params.search = value;
         }
       });
+
+
+      fetch("http://127.0.0.1:7242/ingest/6dac1f6a-680b-4e0b-87b2-f441b05623e3", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: "debug-session",
+          runId: "pre-fix",
+          hypothesisId: "H4",
+          location: "src/providers/data.ts:buildQueryParams",
+          message: "buildQueryParams computed",
+          data: { resource, page, pageSize, params },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => { });
+      // #endregion agent log
+
       return params;
     },
 
     mapResponse: async (response: Response) => {
+
+      fetch("http://127.0.0.1:7242/ingest/6dac1f6a-680b-4e0b-87b2-f441b05623e3", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: "debug-session",
+          runId: "pre-fix",
+          hypothesisId: "H3",
+          location: "src/providers/data.ts:mapResponse",
+          message: "mapResponse called",
+          data: { status: response.status, url: response.url },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => { });
+      // #endregion agent log
+
       const payload: ListResponse = await response.clone().json();
       return payload.data ?? [];
     },
 
     getTotalCount: async (response: Response) => {
+
+      fetch("http://127.0.0.1:7242/ingest/6dac1f6a-680b-4e0b-87b2-f441b05623e3", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: "debug-session",
+          runId: "pre-fix",
+          hypothesisId: "H3",
+          location: "src/providers/data.ts:getTotalCount",
+          message: "getTotalCount called",
+          data: { status: response.status, url: response.url },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => { });
+      // #endregion agent log
+
       const payload: ListResponse = await response.clone().json();
       return payload.pagination?.total ?? payload.data?.length ?? 0;
     },
