@@ -11,9 +11,16 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { classSchema } from "@/lib/schema";
-import { useBack, type BaseRecord, type HttpError } from "@refinedev/core";
+import { useBack, useSelect, type BaseRecord, type HttpError } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator } from "@/components/ui/separator";
@@ -23,6 +30,12 @@ const Create = () => {
     const back = useBack();
 
     type ClassFormValues = z.infer<typeof classSchema>;
+
+    const subjectSelect = useSelect({
+        resource: "subjects",
+        optionLabel: "name",
+        optionValue: "id",
+    });
 
     const form = useForm<BaseRecord, HttpError, ClassFormValues>({
         resolver: zodResolver(classSchema),
@@ -72,22 +85,96 @@ const Create = () => {
                                 onSubmit={form.handleSubmit(onSubmit)}
                                 className="space-y-5"
                             >
-                                <FormField
-                                    control={form.control}
-                                    name="name"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Class name</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="e.g. Intro to Databases"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                <div className="grid sm:grid-cols-2 gap-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="bannerImage"
+                                        render={({ field }) => (
+                                            <FormItem className="sm:col-span-2">
+                                                <FormLabel>
+                                                    Banner Image{" "}
+                                                    <span className="text-orange-600">*</span>
+                                                </FormLabel>
+                                                <div className="text-sm text-muted-foreground">
+                                                    Upload image widget
+                                                </div>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="https://..."
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="name"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Class Name{" "}
+                                                    <span className="text-orange-600">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Introduction to Biology - Section A"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="subjectId"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Subject{" "}
+                                                    <span className="text-orange-600">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Select
+                                                        value={
+                                                            field.value
+                                                                ? String(field.value)
+                                                                : ""
+                                                        }
+                                                        onValueChange={(value) =>
+                                                            field.onChange(
+                                                                value === ""
+                                                                    ? 0
+                                                                    : Number(value),
+                                                            )
+                                                        }
+                                                    >
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="Select a subject" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {(subjectSelect.options ?? []).map(
+                                                                (opt) => (
+                                                                    <SelectItem
+                                                                        key={String(opt.value)}
+                                                                        value={String(opt.value)}
+                                                                    >
+                                                                        {opt.label}
+                                                                    </SelectItem>
+                                                                ),
+                                                            )}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
 
                                 <FormField
                                     control={form.control}
@@ -108,32 +195,6 @@ const Create = () => {
 
                                 <FormField
                                     control={form.control}
-                                    name="subjectId"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Subject ID</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    inputMode="numeric"
-                                                    placeholder="e.g. 1"
-                                                    value={field.value ? String(field.value) : ""}
-                                                    onChange={(e) =>
-                                                        field.onChange(
-                                                            e.target.value === ""
-                                                                ? 0
-                                                                : Number(e.target.value),
-                                                        )
-                                                    }
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
                                     name="joinCode"
                                     render={({ field }) => (
                                         <FormItem>
@@ -141,23 +202,6 @@ const Create = () => {
                                             <FormControl>
                                                 <Input
                                                     placeholder="e.g. ABCD1234"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="bannerImage"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Banner image URL (optional)</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="https://..."
                                                     {...field}
                                                 />
                                             </FormControl>
