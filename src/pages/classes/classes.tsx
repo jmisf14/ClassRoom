@@ -64,6 +64,18 @@ const Create = () => {
 
     const onSubmit = (values: ClassFormValues) => form.refineCore.onFinish(values);
 
+    const bannerPublicId = form.watch('bannerCldPubId'); 
+    const setBannerImage = (field, file) => {
+        if (file) {
+            field.onChange(file.url);
+            form.setValue('bannerCldPubId', file.publicId, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
+        }
+    }
+
+
     return (
         <CreateView className="class-view">
             <Breadcrumb />
@@ -106,9 +118,10 @@ const Create = () => {
                                                     <span className="text-orange-600">*</span>
                                                 </FormLabel>
                                                 <div className="text-sm text-muted-foreground">
-                                                    Upload image widget
+                                                    UploadWidget
                                                 </div>
                                                 <FormControl>
+                                                    {/* YOU ARE HERE: Banner Image upload widget (Cloudinary) */}
                                                     <UploadWidget
                                                         value={field.value}
                                                         onChange={field.onChange}
