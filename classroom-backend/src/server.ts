@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import subjectsRouter from "./db/routes/subjects.js";
+import teachersRouter from "./db/routes/teachers.js";
+import classesRouter from "./db/routes/classes.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -31,6 +33,8 @@ app.get("/openapi.json", (_req, res) => {
 });
 
 app.use("/api/subjects", subjectsRouter);
+app.use("/api/teachers", teachersRouter);
+app.use("/api/classes", classesRouter);
 
 const port = Number(process.env.PORT ?? 8000);
 

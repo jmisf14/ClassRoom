@@ -78,10 +78,217 @@
                     }
                 }
             }
+        },
+        "/api/teachers": {
+            "get": {
+                "summary": "List teachers",
+                "responses": {
+                    "200": {
+                        "description": "Teachers list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Teacher"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/classes": {
+            "get": {
+                "summary": "List classes",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Classes list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassesListResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create class",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClassCreatePayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created class",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Class"
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
+            "Teacher": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ]
+            },
+            "Class": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "subjectId": {
+                        "type": "integer"
+                    },
+                    "teacherId": {
+                        "type": "integer"
+                    },
+                    "capacity": {
+                        "type": "integer"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive"
+                        ]
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "bannerImage": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "subjectId",
+                    "teacherId",
+                    "capacity",
+                    "status"
+                ]
+            },
+            "ClassCreatePayload": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "subjectId": {
+                        "type": "integer"
+                    },
+                    "teacherId": {
+                        "type": "integer"
+                    },
+                    "capacity": {
+                        "type": "integer"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive"
+                        ]
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "bannerImage": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name",
+                    "subjectId",
+                    "teacherId",
+                    "capacity",
+                    "status",
+                    "bannerImage"
+                ]
+            },
             "Department": {
                 "type": "object",
                 "properties": {
@@ -190,6 +397,24 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Subject"
+                        }
+                    },
+                    "pagination": {
+                        "$ref": "#/components/schemas/Pagination"
+                    }
+                },
+                "required": [
+                    "data",
+                    "pagination"
+                ]
+            },
+            "ClassesListResponse": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Class"
                         }
                     },
                     "pagination": {
