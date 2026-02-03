@@ -42,6 +42,7 @@ export const classSchema = z.object({
     joinCode: z.string().min(4).max(12).optional(),
     bannerImage: z.string().min(1, "Banner image is required"),
     bannerCldPubId: z.string().optional(),
+    bannerDeleteToken: z.string().optional(),
     schedule: scheduleSchema.optional(),
 });
 

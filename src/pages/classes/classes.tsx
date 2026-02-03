@@ -19,7 +19,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { UploadWidget } from "@/components/upload-widghet";
+import { UploadWidget, type UploadWidgetValue } from "@/components/upload-widghet";
 import { classSchema } from "@/lib/schema";
 import { useBack, useSelect, type BaseRecord, type HttpError } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
@@ -59,6 +59,8 @@ const Create = () => {
             status: "active",
             joinCode: "",
             bannerImage: "",
+            bannerCldPubId: "",
+            bannerDeleteToken: "",
         },
     });
 
@@ -112,18 +114,47 @@ const Create = () => {
                                                 <FormControl>
                                                     {/* YOU ARE HERE: Banner Image upload widget (Cloudinary) */}
                                                     <UploadWidget
-                                                        value={field.value}
-                                                        onChange={field.onChange}
-                                                        onPublicIdChange={(publicId) =>
+                                                        value={
+                                                            field.value
+                                                                ? ({
+                                                                    url: field.value,
+                                                                    publicId:
+                                                                        form.getValues(
+                                                                            "bannerCldPubId",
+                                                                        ) || undefined,
+                                                                    deleteToken:
+                                                                        form.getValues(
+                                                                            "bannerDeleteToken",
+                                                                        ) || undefined,
+                                                                } satisfies UploadWidgetValue)
+                                                                : null
+                                                        }
+                                                        onChange={(next) => {
                                                             form.setValue(
-                                                                "bannerCldPubId",
-                                                                publicId,
+                                                                "bannerImage",
+                                                                next?.url ?? "",
                                                                 {
                                                                     shouldDirty: true,
                                                                     shouldValidate: true,
                                                                 },
-                                                            )
-                                                        }
+                                                            );
+                                                            form.setValue(
+                                                                "bannerCldPubId",
+                                                                next?.publicId ?? "",
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldValidate: true,
+                                                                },
+                                                            );
+                                                            form.setValue(
+                                                                "bannerDeleteToken",
+                                                                next?.deleteToken ?? "",
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldValidate: true,
+                                                                },
+                                                            );
+                                                        }}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
