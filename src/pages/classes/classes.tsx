@@ -69,17 +69,17 @@ const Create = () => {
 
             <h1 className="page-title">Create a Class</h1>
 
-            <div className="intro-row">
+            <div className="intro-row flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <p>Provide the required information below to add a class.</p>
-                <Button type="button" onClick={() => back()}>
+                <Button type="button" className="sm:w-auto w-full" onClick={() => back()}>
                     Go Back
                 </Button>
             </div>
 
             <Separator />
 
-            <div className="my-4 flex items-center">
-                <Card className="class-form-card">
+            <div className="my-4 flex items-center justify-center">
+                <Card className="class-form-card w-full max-w-2xl">
                     <CardHeader className="relative z-10">
                         <CardTitle className="text-2xl pb-0 font-bold">
                             Fill out the form
@@ -325,6 +325,7 @@ const Create = () => {
 
                                 <Button
                                     type="submit"
+                                    className="w-full"
                                     disabled={form.refineCore.formLoading}
                                 >
                                     {form.refineCore.formLoading ? "Saving..." : "Create Class"}

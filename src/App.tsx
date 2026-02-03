@@ -33,7 +33,7 @@ function App() {
       timestamp: Date.now(),
     }),
   }).catch(() => { });
-  
+
 
   return (
     <BrowserRouter>
@@ -62,29 +62,26 @@ function App() {
                   name: 'classes',
                   list: '/classes',
                   create: '/classes/create',
-                  meta: { label: 'Classes', icon: <GraduationCap/> }
+                  meta: { label: 'Classes', icon: <GraduationCap /> }
                 }
               ]}
             >
               <Routes>
-                <Route element={
-                  <Layout>
-                    <Outlet />
-                    <Toaster />
-                  </Layout>
-                }>
-                  <Route path="/" element={<Dashboard />} />
-                </Route>
-                <Route path="subjects">
-                  <Route index element={<SubjectsList />} />
-                  <Route path="create" element={<SubjectsCreate />} />
-                </Route>
-                <Route path="classes">
-                  <Route index element={<ClassesList />} />
-                  <Route path="create" element={<ClassesCreate />} />
+                <Route
+                  element={
+                    <Layout>
+                      <Outlet />
+                      <Toaster />
+                    </Layout>
+                  }
+                >
+                  <Route index element={<Dashboard />} />
+                  <Route path="subjects" element={<SubjectsList />} />
+                  <Route path="subjects/create" element={<SubjectsCreate />} />
+                  <Route path="classes" element={<ClassesList />} />
+                  <Route path="classes/create" element={<ClassesCreate />} />
                 </Route>
               </Routes>
-              <Toaster />
               <RefineKbar />
               <UnsavedChangesNotifier />
               <DocumentTitleHandler />
