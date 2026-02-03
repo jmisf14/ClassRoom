@@ -64,17 +64,6 @@ const Create = () => {
 
     const onSubmit = (values: ClassFormValues) => form.refineCore.onFinish(values);
 
-    const bannerPublicId = form.watch('bannerCldPubId'); 
-    const setBannerImage = (field, file) => {
-        if (file) {
-            field.onChange(file.url);
-            form.setValue('bannerCldPubId', file.publicId, {
-                shouldDirty: true,
-                shouldValidate: true,
-            });
-        }
-    }
-
 
     return (
         <CreateView className="class-view">

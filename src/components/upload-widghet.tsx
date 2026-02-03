@@ -8,6 +8,8 @@ import {
 } from "@/constants";
 import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
+import React from "react";
+
 
 type UploadWidgetProps = {
     value?: string;
@@ -20,6 +22,7 @@ type CloudinaryUploadResponse = {
     secure_url?: string;
     public_id?: string;
 };
+
 
 export function UploadWidget({
     value,
@@ -127,4 +130,5 @@ export function UploadWidget({
         </div>
     );
 }
+export default UploadWidget;
 
