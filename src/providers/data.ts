@@ -4,7 +4,9 @@ import type { ListResponse } from "@/Types";
 
 // Our backend serves resources under /api (e.g. GET /api/subjects)
 if (!BACKEND_BASE_URL) {
-  throw new Error("VITE_BACKEND_BASE_URL is not set (see classroom-frontend/src/constants).");
+  throw new Error(
+    "BACKEND_BASE_URL is not configured. Please set VITE_BACKEND_BASE_URL in your .env file.",
+  );
 }
 
 const API_URL = `${BACKEND_BASE_URL}/api`;

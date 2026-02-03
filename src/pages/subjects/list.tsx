@@ -16,11 +16,12 @@ import {
 } from "@/components/ui/select";
 import { useTable } from "@refinedev/react-table";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { Department } from "@/Types";
 
 type Subject = {
     id: number;
     name?: string;
-    department?: string;
+    department?: Department;
     description?: string;
 };
 
@@ -69,15 +70,16 @@ const SubjectsList = () => {
                 },
                 {
                     id: "department",
-                    accessorKey: "department",
+                    accessorFn: (row) => row.department?.code ?? "",
                     header: () => <p className="column-title">Department</p>,
-                    cell: ({ getValue }) => (
-                        <span className="text-left">{getValue<string>()}</span>
-                    ),
+                    cell: ({ getValue }) => {
+                        const value = getValue<string>();
+                        return <span className="text-left">{value}</span>;
+                    },
                 },
                 {
                     id: "departmentBadge",
-                    accessorKey: "department",
+                    accessorFn: (row) => row.department?.code ?? "",
                     header: () => <p className="column-title">Department</p>,
                     cell: ({ getValue }) => (
                         <Badge variant="secondary">{getValue<string>()}</Badge>
