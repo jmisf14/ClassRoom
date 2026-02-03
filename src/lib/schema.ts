@@ -33,11 +33,14 @@ export const scheduleSchema = z.object({
 
 export const classSchema = z.object({
     name: z.string().min(2, "Class name must be at least 2 characters"),
+    teacherId: z.coerce.number().int().positive(),
     description: z.string().optional(),
     subjectId: z.coerce.number().int().positive(),
+    capacity: z.coerce.number().int().positive(),
+    status: z.enum(["active", "inactive"]),
     // joinCode can be generated on the backend, but if you allow manual entry:
     joinCode: z.string().min(4).max(12).optional(),
-    bannerImage: z.string().optional(),
+    bannerImage: z.string().min(1, "Banner image is required"),
     bannerCldPubId: z.string().optional(),
     schedule: scheduleSchema.optional(),
 });

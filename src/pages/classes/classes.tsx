@@ -37,6 +37,12 @@ const Create = () => {
         optionValue: "id",
     });
 
+    const teacherSelect = useSelect({
+        resource: "teachers",
+        optionLabel: "name",
+        optionValue: "id",
+    });
+
     const form = useForm<BaseRecord, HttpError, ClassFormValues>({
         resolver: zodResolver(classSchema),
         refineCoreProps: {
@@ -47,6 +53,9 @@ const Create = () => {
             name: "",
             description: "",
             subjectId: 0,
+            teacherId: 0,
+            capacity: 30,
+            status: "active",
             joinCode: "",
             bannerImage: "",
         },
@@ -174,6 +183,110 @@ const Create = () => {
                                             </FormItem>
                                         )}
                                     />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="teacherId"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Teacher{" "}
+                                                    <span className="text-orange-600">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Select
+                                                        value={
+                                                            field.value
+                                                                ? String(field.value)
+                                                                : ""
+                                                        }
+                                                        onValueChange={(value) =>
+                                                            field.onChange(
+                                                                value === ""
+                                                                    ? 0
+                                                                    : Number(value),
+                                                            )
+                                                        }
+                                                    >
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="Select a teacher" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {(teacherSelect.options ?? []).map(
+                                                                (opt) => (
+                                                                    <SelectItem
+                                                                        key={String(opt.value)}
+                                                                        value={String(opt.value)}
+                                                                    >
+                                                                        {opt.label}
+                                                                    </SelectItem>
+                                                                ),
+                                                            )}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="capacity"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Capacity</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        inputMode="numeric"
+                                                        placeholder="30"
+                                                        value={String(field.value ?? "")}
+                                                        onChange={(e) =>
+                                                            field.onChange(
+                                                                e.target.value === ""
+                                                                    ? 0
+                                                                    : Number(e.target.value),
+                                                            )
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="status"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Status{" "}
+                                                    <span className="text-orange-600">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Select
+                                                        value={field.value}
+                                                        onValueChange={field.onChange}
+                                                    >
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="Select status" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="active">
+                                                                Active
+                                                            </SelectItem>
+                                                            <SelectItem value="inactive">
+                                                                Inactive
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
                                 </div>
 
                                 <FormField
@@ -214,7 +327,7 @@ const Create = () => {
                                     type="submit"
                                     disabled={form.refineCore.formLoading}
                                 >
-                                    {form.refineCore.formLoading ? "Saving..." : "Create"}
+                                    {form.refineCore.formLoading ? "Saving..." : "Create Class"}
                                 </Button>
                             </form>
                         </Form>
