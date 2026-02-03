@@ -19,6 +19,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { UploadWidget } from "@/components/upload-widghet";
 import { classSchema } from "@/lib/schema";
 import { useBack, useSelect, type BaseRecord, type HttpError } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
@@ -108,9 +109,19 @@ const Create = () => {
                                                     Upload image widget
                                                 </div>
                                                 <FormControl>
-                                                    <Input
-                                                        placeholder="https://..."
-                                                        {...field}
+                                                    <UploadWidget
+                                                        value={field.value}
+                                                        onChange={field.onChange}
+                                                        onPublicIdChange={(publicId) =>
+                                                            form.setValue(
+                                                                "bannerCldPubId",
+                                                                publicId,
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldValidate: true,
+                                                                },
+                                                            )
+                                                        }
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
