@@ -2,11 +2,44 @@ import { Breadcrumb } from "@/components/refine-ui/layout/breadcrumb";
 import { CreateView } from "@/components/refine-ui/views/create-view";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useBack } from "@refinedev/core";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { classSchema } from "@/lib/schema";
+import { useBack, type BaseRecord, type HttpError } from "@refinedev/core";
+import { useForm } from "@refinedev/react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator } from "@/components/ui/separator";
+import * as z from "zod";
 
 const Create = () => {
     const back = useBack();
+
+    type ClassFormValues = z.infer<typeof classSchema>;
+
+    const form = useForm<BaseRecord, HttpError, ClassFormValues>({
+        resolver: zodResolver(classSchema),
+        refineCoreProps: {
+            resource: "classes",
+            action: "create",
+        },
+        defaultValues: {
+            name: "",
+            description: "",
+            subjectId: 0,
+            joinCode: "",
+            bannerImage: "",
+        },
+    });
+
+    const onSubmit = (values: ClassFormValues) => form.refineCore.onFinish(values);
 
     return (
         <CreateView className="class-view">
@@ -34,7 +67,113 @@ const Create = () => {
                     <Separator />
 
                     <CardContent className="mt-7">
-                        {/* TODO: form fields will go here */}
+                        <Form {...form}>
+                            <form
+                                onSubmit={form.handleSubmit(onSubmit)}
+                                className="space-y-5"
+                            >
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Class name</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="e.g. Intro to Databases"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="description"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Description</FormLabel>
+                                            <FormControl>
+                                                <Textarea
+                                                    placeholder="Optional description..."
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="subjectId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Subject ID</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    inputMode="numeric"
+                                                    placeholder="e.g. 1"
+                                                    value={field.value ? String(field.value) : ""}
+                                                    onChange={(e) =>
+                                                        field.onChange(
+                                                            e.target.value === ""
+                                                                ? 0
+                                                                : Number(e.target.value),
+                                                        )
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="joinCode"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Join code (optional)</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="e.g. ABCD1234"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="bannerImage"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Banner image URL (optional)</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="https://..."
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <Button
+                                    type="submit"
+                                    disabled={form.refineCore.formLoading}
+                                >
+                                    {form.refineCore.formLoading ? "Saving..." : "Create"}
+                                </Button>
+                            </form>
+                        </Form>
                     </CardContent>
                 </Card>
             </div>
